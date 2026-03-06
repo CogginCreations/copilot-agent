@@ -1,7 +1,7 @@
 import { CopilotClient, approveAll, CustomAgentConfig, defineTool, SessionConfig, CopilotSession, SessionEvent } from "@github/copilot-sdk";
 import { z } from "zod";
 
-const MAX_TIMEOUT_MS = 30_000;
+const DEFAULT_TIMEOUT_MS = 120_000;
 
 const withTimeout = async <T,>(promise: Promise<T>, timeoutMs: number, operationName: string): Promise<T> => {
     let timeoutHandle: NodeJS.Timeout | undefined;
@@ -36,8 +36,8 @@ export interface handoffInstruction {
 
 
 export const runWorkflow = async (config: { prompt: string; agents: WorkflowAgent[]; streamOutput?: boolean; githubToken?: string; timeoutMs?: number }) => {
-    const { prompt, agents, streamOutput = false, githubToken, timeoutMs = MAX_TIMEOUT_MS } = config;
-    const effectiveTimeoutMs = Math.min(timeoutMs, MAX_TIMEOUT_MS);
+    const { prompt, agents, streamOutput = false, githubToken, timeoutMs = DEFAULT_TIMEOUT_MS } = config;
+    const effectiveTimeoutMs = timeoutMs;
 
     const HAS_TASK = prompt && prompt.trim().length > 0;
     const HAS_AGENTS = agents && agents.length > 0;
@@ -66,7 +66,7 @@ export const runWorkflow = async (config: { prompt: string; agents: WorkflowAgen
     }
 }
 
-const runWorkflowStep = async (client: CopilotClient, agent: WorkflowAgent, task: string, streamOutput: boolean = false, timeoutMs: number = MAX_TIMEOUT_MS) => {
+const runWorkflowStep = async (client: CopilotClient, agent: WorkflowAgent, task: string, streamOutput: boolean = false, timeoutMs: number = DEFAULT_TIMEOUT_MS) => {
 
      const defaultPrompt = "You are an expert agent. Focus on completing your tasks efficiently.";
      const goalWithAgentInstructions = `GOAL: \n ${task} \n BACKGROUND: \n ${agent.prompt || defaultPrompt} \n TOOLS, HANDOFFS, AND OUTPUT INSTRUCTIONS: \n ${addToolsToPrompt(agent)} \n ${addHandoffsToPrompt(agent)} \n ${addStructuredOutputInstructionsToPrompt(agent)}`;
@@ -101,11 +101,7 @@ const runWorkflowStep = async (client: CopilotClient, agent: WorkflowAgent, task
                     `Streaming response for agent ${agent.name}`,
                 );
             } else {
-                response = await withTimeout(
-                    session.sendAndWait({ prompt: task }),
-                    timeoutMs,
-                    `sendAndWait for agent ${agent.name}`,
-                );
+                response = await session.sendAndWait({ prompt: task }, timeoutMs);
                 console.log("Response:", response?.data.content);
             }
             return response?.data.content;

@@ -6,7 +6,9 @@
   "main": "src/agent.mts",
   "scripts": {
     "build": "tsc",
-    "start": "tsx src/agent.mts"
+    "start": "tsx src/agent.mts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@github/copilot-sdk": "^0.1.29",
@@ -15,7 +17,8 @@
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   },
   "repository": {
     "type": "git",

@@ -33,7 +33,7 @@ export async function runStockPickerWorkflow(initialPrompt) {
             prompt: initialPrompt,
             agents: workflowAgents,
             streamOutput: false,
-            timeoutMs: 30_000,
+            timeoutMs: 120_000,
             githubToken
         });
         return result?.finalOutput ?? "";
