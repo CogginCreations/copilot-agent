@@ -1,0 +1,32 @@
+{
+  "name": "copilot-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A project that implements a Copilot agent for stock analysis.",
+  "main": "src/agent.mts",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/agent.mts"
+  },
+  "dependencies": {
+    "@github/copilot-sdk": "^0.1.29",
+    "tsx": "^4.21.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "typescript": "^5.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/copilot-agent.git"
+  },
+  "keywords": [
+    "copilot",
+    "stock",
+    "analysis",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
